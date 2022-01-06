@@ -1,10 +1,12 @@
 package model.entities;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class Reservation {
-    private final SimpleDateFormat sdf = new SimpleDateFormat();
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
 
     private Integer roomNumber;
     private Date checkIn;
@@ -34,40 +36,26 @@ public class Reservation {
         return checkOut;
     }
 
-    public Integer duration(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        Integer firstDate = Integer.parseInt(sdf.format(checkIn));
-        Integer secondDate = Integer.parseInt(sdf.format(checkOut));
-
-        return secondDate - firstDate;
+    public Long duration(){
+        long diff = checkOut.getTime() - checkIn.getTime();
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
 
     public void updateDates(Date checkIn, Date checkOut){
-       if(checkIn.after(new Date()) ||  checkIn.equals(new Date()) && checkOut.after(new Date())) {
-           if (checkIn.before(checkOut)) {
-               this.checkIn = checkIn;
-               this.checkOut = checkOut;
-           } else {
-
-           }
-       }else{
-
-       }
+       this.checkIn = checkIn;
+       this.checkOut = checkOut;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Reservation: Room ");
-        sb.append(roomNumber);
-        sb.append(", check-in: ");
-        sb.append(sdf.format(checkIn));
-        sb.append(", check-out: ");
-        sb.append(sdf.format(checkOut));
-        sb.append(", ");
-        sb.append(duration());
-        sb.append(" night(s)");
-        System.out.println();
-        return sb.toString();
+        return "Reservation: Room " +
+                roomNumber +
+                ", check-in: " +
+                sdf.format(checkIn) +
+                ", check-out: " +
+                sdf.format(checkOut) +
+                ", " +
+                duration() +
+                " night(s)";
     }
 }
